@@ -13,3 +13,4 @@ dev-*.log
 dev-*.err
 
 .vscode/
+.firebase/
