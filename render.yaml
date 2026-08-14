@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-banking-assistant-backend
+    runtime: docker
+    plan: free
+    branch: develop
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /swagger-ui/index.html
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
