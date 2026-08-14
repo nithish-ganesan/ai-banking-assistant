@@ -51,6 +51,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
+                "https://ai-banking-assistant.nithishg.com",
                 "https://ai-banking-assistant-6e91f.web.app",
                 "https://ai-banking-assistant-6e91f.firebaseapp.com"
         ));
