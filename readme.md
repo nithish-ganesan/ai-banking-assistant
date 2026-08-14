@@ -1,24 +1,25 @@
 # AI Banking Assistant
 
-Modern enterprise-style AI Banking Assistant built with Spring Boot 3, Java 21, React, Vite, TypeScript, Tailwind CSS, JWT security, PostgreSQL-ready persistence, and a Gemini API integration hook.
+Modern enterprise-style AI Banking Assistant POC built with Spring Boot 3, Java 21, React, Vite, TypeScript, Tailwind CSS, JWT security, Gmail sign-in, static dashboard data, and a Gemini API integration hook.
 
 ## What is included
 
-- AI banking chat assistant with Markdown responses, typing state, chat clear action, and backend chat history persistence.
+- AI banking chat assistant with Markdown responses, typing state, and safe local fallback responses.
 - Transaction summary API and dashboard table for income, expense, categories, savings, and suggestions.
 - EMI calculator with monthly EMI, total interest, and total payable.
 - Credit card recommendation workflow based on salary, spending habits, travel, and shopping profile.
 - Fraud-awareness prompt handling with safe local fallback responses.
-- JWT register/login flow, role-ready user model, protected APIs, and Google OAuth configuration placeholders.
+- Gmail-only Google Identity login with backend ID-token verification and stateless JWT sessions.
+- Static POC data for analytics, savings coach, charts, and reports. No database persistence is required.
 - Premium responsive dark dashboard with profile and settings pages.
-- Docker Compose setup for frontend, backend, and PostgreSQL.
+- Docker Compose setup for frontend and backend.
 
 ## Project structure
 
 ```text
 backend/
   src/main/java/com/aibank/assistant/
-    config/ controller/ dto/ entity/ exception/ repository/ security/ service/
+    config/ controller/ dto/ entity/ exception/ security/ service/
 frontend/
   src/
     components/ context/ hooks/ layout/ pages/ services/ types/
@@ -36,7 +37,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-The backend starts on `http://localhost:8080`. Without PostgreSQL variables it uses in-memory H2 for quick development.
+The backend starts on `http://localhost:8080`.
 
 ### Frontend
 
@@ -58,8 +59,7 @@ Frontend variables are documented in [frontend/.env.example](frontend/.env.examp
 
 ## API overview
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
+- `POST /api/auth/google`
 - `GET /api/auth/me`
 - `POST /api/chat`
 - `GET /api/chat/history`
@@ -74,23 +74,19 @@ Frontend variables are documented in [frontend/.env.example](frontend/.env.examp
 docker compose up --build
 ```
 
-This starts PostgreSQL, Spring Boot, and the built frontend container.
+This starts Spring Boot and the built frontend container.
 
 ## Deployment notes
 
 - Frontend can be built with `npm.cmd run build` and deployed to Firebase Hosting.
 - Backend can be deployed to Render as a Java 21 Maven service.
-- Use a strong `JWT_SECRET`, PostgreSQL credentials, and real Gemini/Google OAuth secrets in production.
+- Use a strong `JWT_SECRET` and configure real Gemini/Google values in production.
 
 ## Render secrets
 
 Configure these values in Render environment variables instead of committing them:
 
 - `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
+- `VITE_GOOGLE_CLIENT_ID`
 - `JWT_SECRET`
 - `GEMINI_API_KEY`
-- `DATABASE_URL`
-- `DATABASE_USERNAME`
-- `DATABASE_PASSWORD`
-- `DATABASE_DRIVER`

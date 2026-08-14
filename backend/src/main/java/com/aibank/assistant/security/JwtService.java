@@ -1,6 +1,5 @@
 package com.aibank.assistant.security;
 
-import com.aibank.assistant.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,12 +23,12 @@ public class JwtService {
         this.expirationMinutes = expirationMinutes;
     }
 
-    public String generate(User user) {
+    public String generate(String email, String name, String role) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .subject(user.getEmail())
-                .claim("name", user.getName())
-                .claim("role", user.getRole().name())
+                .subject(email)
+                .claim("name", name)
+                .claim("role", role)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expirationMinutes * 60)))
                 .signWith(key)
@@ -37,7 +36,18 @@ public class JwtService {
     }
 
     public String subject(String token) {
-        Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
-        return claims.getSubject();
+        return claims(token).getSubject();
+    }
+
+    public String name(String token) {
+        return claims(token).get("name", String.class);
+    }
+
+    public String role(String token) {
+        return claims(token).get("role", String.class);
+    }
+
+    private Claims claims(String token) {
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }
 }

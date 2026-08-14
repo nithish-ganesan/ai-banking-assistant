@@ -1,6 +1,5 @@
 package com.aibank.assistant.security;
 
-import com.aibank.assistant.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,11 +15,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserRepository users;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserRepository users) {
+    public JwtAuthenticationFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-        this.users = users;
     }
 
     @Override
@@ -29,15 +26,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             try {
-                String email = jwtService.subject(header.substring(7));
-                users.findByEmail(email).ifPresent(user -> {
-                    var auth = new UsernamePasswordAuthenticationToken(
-                            user.getEmail(),
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                });
+                String token = header.substring(7);
+                String email = jwtService.subject(token);
+                String role = jwtService.role(token);
+                var auth = new UsernamePasswordAuthenticationToken(
+                        email,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + (role == null ? "USER" : role)))
+                );
+                auth.setDetails(jwtService.name(token));
+                SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (RuntimeException ignored) {
                 SecurityContextHolder.clearContext();
             }

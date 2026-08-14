@@ -5,10 +5,7 @@ import { UserProfile } from '../types';
 type AuthContextValue = {
   user: UserProfile | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
-  completeOAuthLogin: (token: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -31,16 +28,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => window.removeEventListener(AUTH_EXPIRED_EVENT, clearAuth);
   }, []);
 
-  async function persistAuth(endpoint: '/api/auth/login' | '/api/auth/register' | '/api/auth/google', payload: unknown) {
+  async function persistAuth(endpoint: '/api/auth/google', payload: unknown) {
     const { data } = await api.post(endpoint, payload);
-    localStorage.setItem('ai-bank-token', data.token);
-    localStorage.setItem('ai-bank-user', JSON.stringify(data.user));
-    setToken(data.token);
-    setUser(data.user);
-  }
-
-  async function completeOAuthLogin(oauthToken: string) {
-    const { data } = await api.post('/api/auth/oauth/token', { token: oauthToken });
     localStorage.setItem('ai-bank-token', data.token);
     localStorage.setItem('ai-bank-user', JSON.stringify(data.user));
     setToken(data.token);
@@ -50,10 +39,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const value = useMemo<AuthContextValue>(() => ({
     user,
     token,
-    login: (email, password) => persistAuth('/api/auth/login', { email, password }),
-    register: (name, email, password) => persistAuth('/api/auth/register', { name, email, password }),
     loginWithGoogle: (idToken) => persistAuth('/api/auth/google', { idToken }),
-    completeOAuthLogin,
     logout: () => {
       localStorage.removeItem('ai-bank-token');
       localStorage.removeItem('ai-bank-user');

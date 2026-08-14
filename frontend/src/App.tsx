@@ -4,7 +4,6 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
-import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { useAuth } from './context/AuthContext';
 
 export default function App() {
@@ -14,7 +13,6 @@ export default function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/oauth2/callback" element={<OAuthCallbackPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );

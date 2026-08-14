@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, LockKeyhole } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,29 +20,14 @@ declare global {
 export function LoginPage() {
   const [params] = useSearchParams();
   const googleButtonRef = useRef<HTMLDivElement>(null);
-  const [mode, setMode] = useState<'login' | 'register'>('login');
-  const [name, setName] = useState('Nithish');
-  const [email, setEmail] = useState('nithish@example.com');
-  const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
-  const { login, register, loginWithGoogle } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
   useEffect(() => {
     const message = params.get('error');
     if (message) setError(message);
   }, [params]);
-
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    setError('');
-    try {
-      if (mode === 'login') await login(email, password);
-      else await register(name, email, password);
-    } catch {
-      setError(mode === 'login' ? 'Login failed. Try registering this demo user first.' : 'Registration failed. Email may already exist.');
-    }
-  }
 
   useEffect(() => {
     if (!googleClientId || !googleButtonRef.current) return;
@@ -64,7 +49,7 @@ export function LoginPage() {
           try {
             await loginWithGoogle(response.credential);
           } catch {
-            setError('Google sign-in failed. Check the configured Google client id.');
+            setError('Gmail sign-in failed. Check the configured Google client id.');
           }
         },
       });
@@ -115,41 +100,23 @@ export function LoginPage() {
           </div>
           <div className="mt-16 max-w-md">
             <p className="text-4xl font-semibold leading-tight">Premium banking dashboard with AI at the service desk.</p>
-            <p className="mt-5 text-sm leading-6 text-slate-200">Ask financial questions, summarize transactions, estimate EMIs, compare cards, and get fraud-safety guidance from one protected console.</p>
+            <p className="mt-5 text-sm leading-6 text-slate-200">Use your Gmail account to access the static POC dashboard, savings coach, analytics, and banking assistant.</p>
           </div>
         </div>
 
-        <form onSubmit={submit} className="p-8">
-          <div className="mb-6 inline-flex rounded-lg border border-white/10 bg-black/20 p-1">
-            <button type="button" onClick={() => setMode('login')} className={`seg ${mode === 'login' ? 'seg-active' : ''}`}>Login</button>
-            <button type="button" onClick={() => setMode('register')} className={`seg ${mode === 'register' ? 'seg-active' : ''}`}>Register</button>
-          </div>
-          {mode === 'register' && (
-            <label className="field">
-              <span>Name</span>
-              <input value={name} onChange={(event) => setName(event.target.value)} />
-            </label>
-          )}
-          <label className="field">
-            <span>Email</span>
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-          </label>
-          <label className="field">
-            <span>Password</span>
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
-          </label>
-          {error && <p className="mb-4 rounded-lg border border-red-300/30 bg-red-500/10 p-3 text-sm text-red-100">{error}</p>}
-          <button className="primary-button w-full" type="submit">
-            <LockKeyhole size={18} /> {mode === 'login' ? 'Enter Dashboard' : 'Create Secure Account'}
-          </button>
-          <div className="mt-3 min-h-[44px] w-full overflow-hidden rounded-lg bg-white">
+        <section className="grid content-center p-8">
+          <p className="text-sm uppercase tracking-[0.18em] text-slate-500">Gmail sign-in</p>
+          <h2 className="mt-3 text-2xl font-semibold">Continue securely</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-400">This POC verifies your Gmail with Google and uses static dashboard data. No user profile is saved to a database.</p>
+          {error && <p className="mt-5 rounded-lg border border-red-300/30 bg-red-500/10 p-3 text-sm text-red-100">{error}</p>}
+          <div className="mt-6 min-h-[44px] w-full overflow-hidden rounded-lg bg-white">
             {googleClientId ? (
               <div ref={googleButtonRef} className="w-full" aria-label="Continue with Google" />
             ) : (
-              <p className="px-4 py-3 text-center text-sm text-slate-700">Set VITE_GOOGLE_CLIENT_ID to enable Google sign-in.</p>
+              <p className="px-4 py-3 text-center text-sm text-slate-700">Set VITE_GOOGLE_CLIENT_ID to enable Gmail sign-in.</p>
             )}
           </div>
-        </form>
+        </section>
       </motion.section>
     </main>
   );
