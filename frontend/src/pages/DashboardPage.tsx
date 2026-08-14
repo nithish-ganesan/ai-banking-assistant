@@ -374,38 +374,92 @@ function TransactionAnalyticsPanel({
 
 function FinancialHealthCard({ savings, expense, format }: { savings: number; expense: number; format: (value: number) => string }) {
   const bufferRatio = expense ? Math.round((savings / expense) * 100) : 0;
-  const graphItems = [
-    { label: 'Apr', savings: 50500, expenses: 53400 },
-    { label: 'May', savings: 49700, expenses: 62300 },
-    { label: 'Jun', savings: 57400, expenses: 58600 },
-    { label: 'Jul', savings: 49900, expenses: 68100 },
-    { label: 'Aug', savings, expenses: expense },
+  const candles = [
+    { label: 'Apr-1', open: 52, high: 62, low: 48, close: 58, volume: 44 },
+    { label: 'Apr-2', open: 58, high: 65, low: 53, close: 55, volume: 38 },
+    { label: 'May-1', open: 55, high: 61, low: 46, close: 49, volume: 51 },
+    { label: 'May-2', open: 49, high: 57, low: 44, close: 54, volume: 36 },
+    { label: 'Jun-1', open: 54, high: 69, low: 51, close: 64, volume: 48 },
+    { label: 'Jun-2', open: 64, high: 72, low: 58, close: 60, volume: 42 },
+    { label: 'Jul-1', open: 60, high: 67, low: 50, close: 53, volume: 56 },
+    { label: 'Jul-2', open: 53, high: 60, low: 47, close: 50, volume: 62 },
+    { label: 'Aug-1', open: 50, high: 66, low: 49, close: Math.min(69, Math.max(51, Math.round((savings / Math.max(expense, 1)) * 43))), volume: 46 },
+    { label: 'Now', open: Math.min(68, Math.max(50, Math.round((savings / Math.max(expense, 1)) * 43))), high: 74, low: 48, close: Math.min(74, Math.max(54, Math.round(bufferRatio / 2))), volume: 58 },
   ];
-  const maxValue = Math.max(...graphItems.flatMap((item) => [item.savings, item.expenses]));
+  const width = 760;
+  const height = 300;
+  const top = 22;
+  const bottom = 226;
+  const minValue = 40;
+  const maxValue = 78;
+  const xStep = width / (candles.length + 1);
+  const yFor = (value: number) => bottom - ((value - minValue) / (maxValue - minValue)) * (bottom - top);
+  const quoteRows = [
+    { label: 'BUFFER', value: format(savings), change: `${bufferRatio}%`, up: bufferRatio >= 85 },
+    { label: 'EXPENSE', value: format(expense), change: expense > 65000 ? 'HIGH' : 'OK', up: expense <= 65000 },
+    { label: 'SAVE AVG', value: format(55960), change: savings >= 55960 ? '+UP' : '-DOWN', up: savings >= 55960 },
+    { label: 'RISK', value: bufferRatio >= 90 ? 'LOW' : 'WATCH', change: bufferRatio >= 90 ? 'STABLE' : 'CUT', up: bufferRatio >= 90 },
+  ];
 
   return (
-    <div className="panel dashboard-card finance-visual-card card-health">
-      <div>
-        <h2 className="panel-title">Financial Health Snapshot</h2>
-        <p className="panel-subtitle">3D comparison of savings and expenses across recent months</p>
+    <div className="panel dashboard-card finance-visual-card card-health market-card">
+      <div className="market-header">
+        <div>
+          <h2 className="panel-title">Financial Health Terminal</h2>
+          <p className="panel-subtitle">Cashflow candles built from recent savings and expense movement</p>
+        </div>
+        <div className="market-live">
+          <span />
+          LIVE POC
+        </div>
       </div>
-      <div className="graph3d" aria-label="3D savings and expenses comparison graph">
-        <div className="graph3d-stage">
-          {graphItems.map((item) => (
-            <div className="graph3d-group" key={item.label}>
-              <div className="bar3d bar3d-saving" style={{ height: `${Math.max(18, (item.savings / maxValue) * 210)}px` }}>
-                <span>{format(item.savings)}</span>
-              </div>
-              <div className="bar3d bar3d-expense" style={{ height: `${Math.max(18, (item.expenses / maxValue) * 210)}px` }}>
-                <span>{format(item.expenses)}</span>
-              </div>
-              <strong>{item.label}</strong>
+
+      <div className="market-terminal" aria-label="Trading style financial health graph">
+        <div className="market-sidebar">
+          {quoteRows.map((row) => (
+            <div className="quote-row" key={row.label}>
+              <span>{row.label}</span>
+              <strong>{row.value}</strong>
+              <em className={row.up ? 'quote-up' : 'quote-down'}>{row.change}</em>
             </div>
           ))}
         </div>
-        <div className="graph3d-legend">
-          <span><i className="legend-saving" /> Savings</span>
-          <span><i className="legend-expense" /> Expenses</span>
+        <div className="market-chart-panel">
+          <div className="terminal-toolbar">
+            <span>AIBANK-CASHFLOW</span>
+            <strong>{format(savings)}</strong>
+            <em className={bufferRatio >= 85 ? 'quote-up' : 'quote-down'}>
+              {bufferRatio >= 85 ? '+' : '-'}{Math.abs(bufferRatio - 85)}%
+            </em>
+          </div>
+          <svg className="candlestick-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Cashflow candlestick graph">
+            {[0, 1, 2, 3, 4].map((line) => {
+              const y = top + line * ((bottom - top) / 4);
+              return <line key={`h-${line}`} className="chart-grid-line" x1="0" y1={y} x2={width} y2={y} />;
+            })}
+            {[0, 1, 2, 3, 4, 5].map((line) => {
+              const x = 36 + line * ((width - 72) / 5);
+              return <line key={`v-${line}`} className="chart-grid-line chart-grid-vertical" x1={x} y1={top} x2={x} y2={bottom} />;
+            })}
+            <polyline
+              className="moving-average"
+              points={candles.map((item, index) => `${(index + 1) * xStep},${yFor((item.high + item.low + item.close) / 3)}`).join(' ')}
+            />
+            {candles.map((item, index) => {
+              const x = (index + 1) * xStep;
+              const isUp = item.close >= item.open;
+              const bodyY = yFor(Math.max(item.open, item.close));
+              const bodyHeight = Math.max(8, Math.abs(yFor(item.open) - yFor(item.close)));
+              return (
+                <g className={isUp ? 'candle candle-up' : 'candle candle-down'} key={item.label}>
+                  <line x1={x} y1={yFor(item.high)} x2={x} y2={yFor(item.low)} />
+                  <rect x={x - 12} y={bodyY} width="24" height={bodyHeight} rx="3" />
+                  <rect className="volume-bar" x={x - 13} y={270 - item.volume} width="26" height={item.volume} rx="3" />
+                  <text x={x} y="292">{item.label.replace('-', ' ')}</text>
+                </g>
+              );
+            })}
+          </svg>
         </div>
       </div>
       <div className="health-grid">
