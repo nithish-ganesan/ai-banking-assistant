@@ -3,7 +3,7 @@ import axios from 'axios';
 export const AUTH_EXPIRED_EVENT = 'ai-bank-auth-expired';
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
+  baseURL: import.meta.env.VITE_API_URL ?? import.meta.env.VITE_API_BASE_URL ?? '',
   headers: { 'Content-Type': 'application/json' },
 });
 
