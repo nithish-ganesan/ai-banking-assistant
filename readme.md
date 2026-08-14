@@ -1,43 +1,137 @@
 # AI Banking Assistant
 
-Modern enterprise-style AI Banking Assistant POC built with Spring Boot 3, Java 21, React, Vite, TypeScript, Tailwind CSS, JWT security, Gmail sign-in, static dashboard data, and a Gemini API integration hook.
+AI Banking Assistant is a fintech POC that combines a React dashboard with a Spring Boot API for authenticated banking workflows, AI chat assistance, transaction analytics, EMI calculation, savings coaching, credit card recommendations, and PDF report generation.
 
-## What is included
+Live Firebase Hosting URL:
 
-- AI banking chat assistant with Markdown responses, typing state, and safe local fallback responses.
-- Transaction summary API and dashboard table for income, expense, categories, savings, and suggestions.
-- EMI calculator with monthly EMI, total interest, and total payable.
-- Credit card recommendation workflow based on salary, spending habits, travel, and shopping profile.
-- Fraud-awareness prompt handling with safe local fallback responses.
-- Gmail-only Google Identity login with backend ID-token verification and stateless JWT sessions.
-- Static POC data for analytics, savings coach, charts, and reports. No database persistence is required.
-- Premium responsive dark dashboard with profile and settings pages.
-- Docker Compose setup for frontend and backend.
+```text
+https://ai-banking-assistant-6e91f.web.app
+```
 
-## Project structure
+## POC Scope
+
+- Gmail-based sign-in using Google Identity Services.
+- Backend Google ID token verification and stateless JWT session handling.
+- AI banking chat assistant with Markdown responses and a deterministic fallback when Gemini is not configured.
+- Transaction analytics with monthly income, expenses, savings, category split, comparison cards, table view, and PDF export.
+- EMI calculator for loan amount, interest rate, and tenure.
+- Savings coach that parses plain-text salary and expense inputs and suggests monthly reductions.
+- Credit card recommendation flow based on salary, spending habits, shopping preference, and travel frequency.
+- Profile and settings pages with light/dark theme support.
+- Firebase Hosting deployment for the frontend and Docker/Render-ready backend configuration.
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite 5 |
+| Styling | Tailwind CSS, custom CSS theme tokens, responsive dashboard layout |
+| UI Libraries | Lucide React icons, Framer Motion, React Markdown |
+| API Client | Axios |
+| Backend | Java 21, Spring Boot 3.3 |
+| Backend Modules | Spring Web, Spring Security, Bean Validation |
+| Authentication | Google Identity Services, OAuth2 JOSE token verification, JWT with JJWT |
+| AI Integration | Gemini API hook with local fallback responses |
+| API Docs | Springdoc OpenAPI |
+| Reports | Browser-generated PDF export |
+| Deployment | Firebase Hosting for frontend, Render-ready backend config |
+| Containers | Dockerfile, frontend/backend Dockerfiles, Docker Compose |
+
+## High-Level Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Browser as React Frontend
+    participant Google as Google Identity Services
+    participant API as Spring Boot API
+    participant Gemini as Gemini API
+    participant Firebase as Firebase Hosting
+
+    User->>Browser: Open banking assistant
+    Browser->>Firebase: Load static frontend assets
+    Firebase-->>Browser: React app, CSS, JS
+
+    User->>Browser: Sign in with Gmail
+    Browser->>Google: Request Google ID token
+    Google-->>Browser: Google ID token
+    Browser->>API: POST /api/auth/google with ID token
+    API->>Google: Verify token signature and audience
+    Google-->>API: Valid token claims
+    API-->>Browser: App JWT and user profile
+
+    User->>Browser: Ask banking question
+    Browser->>API: POST /api/chat with JWT
+    API->>API: Validate JWT and apply safety rules
+    alt Gemini key configured
+        API->>Gemini: Send banking prompt
+        Gemini-->>API: AI response
+    else Gemini unavailable
+        API->>API: Generate local fallback response
+    end
+    API-->>Browser: Markdown answer
+
+    User->>Browser: Use dashboard tools
+    Browser->>API: Banking API requests with JWT
+    API-->>Browser: EMI, summary, or card recommendation
+    Browser->>Browser: Render analytics, charts, theme, PDF exports
+```
+
+## Project Structure
 
 ```text
 backend/
   src/main/java/com/aibank/assistant/
-    config/ controller/ dto/ entity/ exception/ security/ service/
+    config/
+    controller/
+    dto/
+    entity/
+    exception/
+    security/
+    service/
 frontend/
   src/
-    components/ context/ hooks/ layout/ pages/ services/ types/
+    context/
+    hooks/
+    layout/
+    pages/
+    services/
+    types/
+docker/
 docker-compose.yml
+Dockerfile
+firebase.json
+render.yaml
 ```
 
-## Run locally
+## API Overview
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/auth/google` | Verify Google ID token and issue app JWT |
+| POST | `/api/chat` | Ask the AI banking assistant |
+| GET | `/api/chat/history` | Read chat history |
+| DELETE | `/api/chat/history` | Clear chat history |
+| POST | `/api/banking/transactions/summary` | Summarize transactions |
+| POST | `/api/banking/emi` | Calculate EMI |
+| POST | `/api/banking/cards/recommend` | Recommend a credit card |
+
+## Local Development
 
 ### Backend
 
-Set `JAVA_HOME` to your Java 21 installation, then run:
+Use Java 21, then start Spring Boot:
 
 ```powershell
 cd backend
 mvn spring-boot:run
 ```
 
-The backend starts on `http://localhost:8080`.
+Backend URL:
+
+```text
+http://localhost:8080
+```
 
 ### Frontend
 
@@ -49,22 +143,41 @@ npm.cmd install
 npm.cmd run dev
 ```
 
-The frontend starts on `http://localhost:5173`.
+Frontend URL:
 
-## Environment
+```text
+http://localhost:5173
+```
 
-Backend variables are documented in [backend/.env.example](backend/.env.example). Set `GEMINI_API_KEY` to enable live Gemini responses; otherwise the backend uses a deterministic local banking assistant fallback.
+## Environment Variables
+
+Backend variables are documented in [backend/.env.example](backend/.env.example).
+
+Required or commonly used backend values:
+
+- `GOOGLE_CLIENT_ID`
+- `GEMINI_API_KEY`
+- `JWT_SECRET`
 
 Frontend variables are documented in [frontend/.env.example](frontend/.env.example).
 
-## API overview
+Required or commonly used frontend values:
 
-- `POST /api/chat`
-- `GET /api/chat/history`
-- `DELETE /api/chat/history`
-- `POST /api/banking/transactions/summary`
-- `POST /api/banking/emi`
-- `POST /api/banking/cards/recommend`
+- `VITE_API_BASE_URL`
+- `VITE_GOOGLE_CLIENT_ID`
+
+## Build
+
+```powershell
+cd frontend
+npm.cmd run build
+```
+
+The production frontend is written to:
+
+```text
+frontend/dist
+```
 
 ## Docker
 
@@ -72,22 +185,26 @@ Frontend variables are documented in [frontend/.env.example](frontend/.env.examp
 docker compose up --build
 ```
 
-This starts Spring Boot and the built frontend container.
+This starts the backend and frontend containers using the repository Docker configuration.
 
-## Deployment notes
+## Deployment
 
-- Frontend can be built with `npm.cmd run build` and deployed to Firebase Hosting.
-- Backend can be deployed to Render as a Java 21 Maven service.
-- Google Identity Services handles real Gmail login like the NiSa ecommerce POC.
-- The frontend keeps the Google ID token session locally; the backend verifies that token for protected API calls.
+### Frontend
 
-## Render secrets
+Firebase Hosting is configured in [firebase.json](firebase.json) and serves `frontend/dist`.
 
-Configure these values in Render environment variables instead of committing them:
+```powershell
+npm.cmd run build
+npx firebase-tools deploy --only hosting --project ai-banking-assistant-6e91f --non-interactive
+```
 
-- `GOOGLE_CLIENT_ID`
-- `GEMINI_API_KEY`
+### Backend
 
-Configure this value when building the frontend:
+The backend is prepared for Render using [render.yaml](render.yaml). Configure secrets in the Render dashboard instead of committing them.
 
-- `VITE_GOOGLE_CLIENT_ID`
+## Notes
+
+- The POC uses static sample transactions for dashboard analytics.
+- No database is required for the current POC scope.
+- Gemini is optional; the backend remains usable with deterministic fallback responses.
+- Generated build folders, logs, local IDE settings, and Firebase cache files are ignored by Git.
