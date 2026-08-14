@@ -59,8 +59,6 @@ Frontend variables are documented in [frontend/.env.example](frontend/.env.examp
 
 ## API overview
 
-- `POST /api/auth/google`
-- `GET /api/auth/me`
 - `POST /api/chat`
 - `GET /api/chat/history`
 - `DELETE /api/chat/history`
@@ -80,11 +78,16 @@ This starts Spring Boot and the built frontend container.
 
 - Frontend can be built with `npm.cmd run build` and deployed to Firebase Hosting.
 - Backend can be deployed to Render as a Java 21 Maven service.
-- Firebase Authentication handles real Gmail login for the hosted POC.
-- Render only needs the Gemini key for AI chat responses.
+- Google Identity Services handles real Gmail login like the NiSa ecommerce POC.
+- The frontend keeps the Google ID token session locally; the backend verifies that token for protected API calls.
 
 ## Render secrets
 
 Configure these values in Render environment variables instead of committing them:
 
+- `GOOGLE_CLIENT_ID`
 - `GEMINI_API_KEY`
+
+Configure this value when building the frontend:
+
+- `VITE_GOOGLE_CLIENT_ID`

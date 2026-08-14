@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,11 +19,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final JwtDecoder firebaseJwtDecoder;
+    private final JwtDecoder googleJwtDecoder;
+    private final String googleClientId;
 
-    public JwtAuthenticationFilter(JwtService jwtService, @Qualifier("firebaseJwtDecoder") JwtDecoder firebaseJwtDecoder) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService,
+            @Qualifier("googleJwtDecoder") JwtDecoder googleJwtDecoder,
+            @Value("${app.google.client-id}") String googleClientId
+    ) {
         this.jwtService = jwtService;
-        this.firebaseJwtDecoder = firebaseJwtDecoder;
+        this.googleJwtDecoder = googleJwtDecoder;
+        this.googleClientId = googleClientId;
     }
 
     @Override
@@ -31,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (!authenticateAppToken(token) && !authenticateFirebaseToken(token)) {
+            if (!authenticateAppToken(token) && !authenticateGoogleToken(token)) {
                 SecurityContextHolder.clearContext();
             }
         }
@@ -49,15 +56,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean authenticateFirebaseToken(String token) {
+    private boolean authenticateGoogleToken(String token) {
         try {
-            Jwt firebaseToken = firebaseJwtDecoder.decode(token);
-            String email = firebaseToken.getClaimAsString("email");
-            Boolean emailVerified = firebaseToken.getClaim("email_verified");
+            Jwt googleToken = googleJwtDecoder.decode(token);
+            if (googleClientId == null || googleClientId.isBlank() || !googleToken.getAudience().contains(googleClientId)) {
+                return false;
+            }
+            String email = googleToken.getClaimAsString("email");
+            Boolean emailVerified = googleToken.getClaim("email_verified");
             if (email == null || !email.toLowerCase().endsWith("@gmail.com") || !Boolean.TRUE.equals(emailVerified)) {
                 return false;
             }
-            String name = firebaseToken.getClaimAsString("name");
+            String name = googleToken.getClaimAsString("name");
             setAuthentication(email.toLowerCase(), name == null ? email : name, "USER");
             return true;
         } catch (RuntimeException ignored) {
