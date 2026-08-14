@@ -82,5 +82,15 @@ This starts PostgreSQL, Spring Boot, and the built frontend container.
 - Backend can be deployed to Render as a Java 21 Maven service.
 - Use a strong `JWT_SECRET`, PostgreSQL credentials, and real Gemini/Google OAuth secrets in production.
 
+## Render secrets
 
-google client id : 254454700837-akme3tm8knnp4smrkoid83jvchvrcucm.apps.googleusercontent.com
+Configure these values in Render environment variables instead of committing them:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `JWT_SECRET`
+- `GEMINI_API_KEY`
+- `DATABASE_URL`
+- `DATABASE_USERNAME`
+- `DATABASE_PASSWORD`
+- `DATABASE_DRIVER`
