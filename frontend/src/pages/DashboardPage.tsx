@@ -373,6 +373,8 @@ function TransactionAnalyticsPanel({
 }
 
 function FinancialHealthCard({ savings, expense, format }: { savings: number; expense: number; format: (value: number) => string }) {
+  const [selectedRange, setSelectedRange] = useState('1d');
+  const [syncCount, setSyncCount] = useState(0);
   const bufferRatio = expense ? Math.round((savings / expense) * 100) : 0;
   const balancePoints = [
     { label: '8:00AM', value: 28850 },
@@ -417,14 +419,21 @@ function FinancialHealthCard({ savings, expense, format }: { savings: number; ex
             <em>INR</em>
           </div>
           <div className="balance-controls">
-            <button type="button">1D</button>
-            <button type="button">Sync</button>
-            <button type="button">7 Days</button>
+            <button className={selectedRange === '1d' ? 'active' : ''} type="button" onClick={() => setSelectedRange('1d')}>1D</button>
+            <button type="button" onClick={() => setSyncCount((count) => count + 1)}>Sync{syncCount ? ` ${syncCount}` : ''}</button>
+            <button className={selectedRange === '7w' ? 'active' : ''} type="button" onClick={() => setSelectedRange('7w')}>7 Days</button>
           </div>
         </div>
         <div className="balance-ranges" aria-label="Chart range">
           {['1s', '15m', '1h', '4h', '1d', '7w'].map((range) => (
-            <button className={range === '1d' ? 'active' : ''} type="button" key={range}>{range}</button>
+            <button
+              className={range === selectedRange ? 'active' : ''}
+              type="button"
+              key={range}
+              onClick={() => setSelectedRange(range)}
+            >
+              {range}
+            </button>
           ))}
         </div>
         <svg className="balance-line-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Account balance line chart">
