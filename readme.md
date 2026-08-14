@@ -80,13 +80,11 @@ This starts Spring Boot and the built frontend container.
 
 - Frontend can be built with `npm.cmd run build` and deployed to Firebase Hosting.
 - Backend can be deployed to Render as a Java 21 Maven service.
-- Use a strong `JWT_SECRET` and configure real Gemini/Google values in production.
+- Firebase Authentication handles real Gmail login for the hosted POC.
+- Render only needs the Gemini key for AI chat responses.
 
 ## Render secrets
 
 Configure these values in Render environment variables instead of committing them:
 
-- `GOOGLE_CLIENT_ID`
-- `VITE_GOOGLE_CLIENT_ID`
-- `JWT_SECRET`
 - `GEMINI_API_KEY`
