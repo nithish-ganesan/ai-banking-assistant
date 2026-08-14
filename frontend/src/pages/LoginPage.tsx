@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Bot, Clipboard, ExternalLink } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -62,9 +63,18 @@ export function LoginPage() {
       try {
         await loginWithGoogle(idToken);
       } catch (exception) {
-        const message = exception instanceof Error && exception.message
-          ? messageFromGoogleError(exception.message)
-          : 'Unable to sign in with Google. Please try again.';
+        let message = 'Unable to sign in with Google. Please try again.';
+        if (axios.isAxiosError(exception)) {
+          if (typeof exception.response?.data?.message === 'string') {
+            message = exception.response.data.message;
+          } else if (exception.code === 'ECONNABORTED') {
+            message = 'Google sign-in is taking too long. Please try again.';
+          } else if (exception.message) {
+            message = `Google sign-in failed: ${exception.message}`;
+          }
+        } else if (exception instanceof Error && exception.message) {
+          message = messageFromGoogleError(exception.message);
+        }
         setError(message);
       } finally {
         setSubmitting(false);
@@ -198,7 +208,7 @@ export function LoginPage() {
         <section className="grid content-center p-8">
           <p className="text-sm uppercase tracking-[0.18em] text-slate-500">Gmail sign-in</p>
           <h2 className="mt-3 text-2xl font-semibold">Continue securely</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-400">This POC uses the same Google sign-in setup as NiSa and keeps the login session in the browser.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-400">This POC uses the same Google sign-in setup as NiSa and verifies your session through the backend.</p>
           <div className="mt-6 min-h-[44px] w-full overflow-hidden rounded-lg bg-white">
             {googleClientId ? (
               <div ref={googleButtonRef} className="w-full" aria-label="Continue with Google" />
