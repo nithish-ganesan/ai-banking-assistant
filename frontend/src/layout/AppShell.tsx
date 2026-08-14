@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import type { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Bot, LayoutDashboard, LogOut, Settings, Shield, UserRound } from 'lucide-react';
+import { Bot, LayoutDashboard, LogOut, Settings, UserRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -25,13 +25,6 @@ export function AppShell({ children }: PropsWithChildren) {
           <NavItem to="/profile" icon={<UserRound size={18} />} label="Profile" />
           <NavItem to="/settings" icon={<Settings size={18} />} label="Settings" />
         </nav>
-
-        <div className="absolute bottom-6 left-5 right-5 rounded-lg border border-emerald-300/20 bg-emerald-300/10 p-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-emerald-100">
-            <Shield size={17} /> Secure session
-          </div>
-          <p className="mt-2 text-xs leading-5 text-emerald-50/70">JWT protected APIs with role-ready backend security.</p>
-        </div>
       </aside>
 
       <main className="lg:pl-72">
