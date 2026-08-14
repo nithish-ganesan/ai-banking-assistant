@@ -10,6 +10,10 @@ html {
   background: #07111f;
 }
 
+html[data-theme="light"] {
+  background: #f8fafc;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -888,6 +892,54 @@ select {
 .light-theme .data-table th,
 .light-theme .data-table td {
   border-bottom-color: rgba(15, 23, 42, 0.1);
+}
+
+.light-theme .balance-card {
+  background:
+    radial-gradient(circle at 74% 20%, rgba(14, 165, 233, 0.14), transparent 28%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(236, 246, 255, 0.96));
+}
+
+.light-theme .balance-controls button,
+.light-theme .balance-ranges button {
+  border-color: rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  color: rgb(51 65 85);
+}
+
+.light-theme .balance-controls .active,
+.light-theme .balance-ranges .active {
+  border-color: rgba(15, 95, 168, 0.44);
+  background: rgba(15, 95, 168, 0.12);
+  color: #0f172a;
+}
+
+.light-theme .balance-chart-shell {
+  border-color: rgba(15, 95, 168, 0.18);
+  background:
+    radial-gradient(circle at 77% 20%, rgba(14, 165, 233, 0.18), transparent 18%),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(224, 242, 254, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 18px 46px rgba(15, 23, 42, 0.08);
+}
+
+.light-theme .balance-title,
+.light-theme .balance-title strong,
+.light-theme .balance-tooltip text {
+  color: rgb(15 23 42);
+  fill: rgb(15 23 42);
+}
+
+.light-theme .balance-tooltip rect {
+  fill: rgba(255, 255, 255, 0.96);
+  stroke: rgba(15, 95, 168, 0.24);
+}
+
+.light-theme .pie-chart path {
+  stroke: #f8fafc;
+}
+
+.light-theme .pie-chart circle {
+  fill: #f8fafc;
 }
 
 .light-theme .pie-total-value,
