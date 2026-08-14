@@ -505,14 +505,7 @@ select {
 .balance-area {
   fill: url(#balanceArea);
   stroke: none;
-}
-
-.balance-line-shadow {
-  fill: none;
-  stroke: rgba(45, 212, 191, 0.23);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 28;
+  opacity: 0.78;
 }
 
 .balance-line {
@@ -520,7 +513,7 @@ select {
   stroke: #5eead4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 9;
+  stroke-width: 6;
 }
 
 .balance-guide {
@@ -530,13 +523,13 @@ select {
 }
 
 .balance-point-halo {
-  fill: rgba(94, 234, 212, 0.24);
+  fill: rgba(94, 234, 212, 0.18);
 }
 
 .balance-point {
   fill: #99f6e4;
   stroke: rgba(8, 64, 62, 0.95);
-  stroke-width: 8;
+  stroke-width: 7;
 }
 
 .balance-tooltip rect {

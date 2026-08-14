@@ -435,7 +435,7 @@ function FinancialHealthCard({ savings, expense, format }: { savings: number; ex
               <stop offset="100%" stopColor="#020617" stopOpacity="0.02" />
             </linearGradient>
             <filter id="balanceGlow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="10" result="blur" />
+              <feGaussianBlur stdDeviation="5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -464,7 +464,6 @@ function FinancialHealthCard({ savings, expense, format }: { savings: number; ex
           })}
           <line className="balance-top-dash" x1={left} y1={activeY} x2={right} y2={activeY} />
           <polyline className="balance-area" points={areaPoints} />
-          <polyline className="balance-line-shadow" points={linePoints} />
           <polyline className="balance-line" points={linePoints} filter="url(#balanceGlow)" />
           <line className="balance-guide" x1={activeX} y1={top} x2={activeX} y2={bottom + 8} />
           <circle className="balance-point-halo" cx={activeX} cy={activeY} r="44" filter="url(#balanceDotGlow)" />
