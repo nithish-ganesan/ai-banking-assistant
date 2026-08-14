@@ -375,28 +375,28 @@ function TransactionAnalyticsPanel({
 function FinancialHealthCard({ savings, expense, format }: { savings: number; expense: number; format: (value: number) => string }) {
   const bufferRatio = expense ? Math.round((savings / expense) * 100) : 0;
   const balancePoints = [
-    { label: '8:00AM', value: 28600 },
-    { label: '8:30AM', value: 29550 },
-    { label: '9:00AM', value: 27900 },
-    { label: '9:30AM', value: 24800 },
-    { label: '10:00AM', value: 29200 },
-    { label: '10:30AM', value: 27650 },
-    { label: '11:00AM', value: 35200 },
-    { label: '11:30AM', value: 20900 },
-    { label: '12:00PM', value: 31200 },
-    { label: '12:30PM', value: 33600 },
-    { label: '1:00PM', value: Math.max(26000, Math.round(savings * 0.72)) },
-    { label: '1:30PM', value: Math.max(28000, Math.round(savings * 0.67)) },
-    { label: '2:00PM', value: Math.max(30000, Math.round(savings * 0.75)) },
+    { label: '8:00AM', value: 28850 },
+    { label: '8:30AM', value: 29600 },
+    { label: '9:00AM', value: 28200 },
+    { label: '9:30AM', value: 25750 },
+    { label: '10:00AM', value: 29350 },
+    { label: '10:30AM', value: 28100 },
+    { label: '11:00AM', value: 34350 },
+    { label: '11:30AM', value: 22400 },
+    { label: '12:00PM', value: 31050 },
+    { label: '12:30PM', value: 33100 },
+    { label: '1:00PM', value: 47664 },
+    { label: '1:30PM', value: 42050 },
+    { label: '2:00PM', value: 49300 },
   ];
-  const width = 760;
-  const height = 360;
-  const left = 54;
-  const right = 724;
-  const top = 78;
-  const bottom = 292;
+  const width = 1440;
+  const height = 640;
+  const left = 108;
+  const right = 1372;
+  const top = 72;
+  const bottom = 514;
   const minValue = 18000;
-  const maxValue = 42000;
+  const maxValue = 50000;
   const xStep = (right - left) / (balancePoints.length - 1);
   const yFor = (value: number) => bottom - ((value - minValue) / (maxValue - minValue)) * (bottom - top);
   const linePoints = balancePoints.map((item, index) => `${left + index * xStep},${yFor(item.value)}`).join(' ');
@@ -408,12 +408,12 @@ function FinancialHealthCard({ savings, expense, format }: { savings: number; ex
 
   return (
     <div className="panel dashboard-card finance-visual-card card-health balance-card">
-      <div className="balance-chart-shell" aria-label="Account balance line graph">
+      <div className="balance-chart-shell" aria-label={`Account balance line graph with ${bufferRatio}% expense coverage`}>
         <div className="balance-topbar">
           <div className="balance-title">
             <span className="balance-icon">₹</span>
             <span>Balance</span>
-            <strong>{format(savings)}</strong>
+            <strong>{format(38154)}</strong>
             <em>INR</em>
           </div>
           <div className="balance-controls">
@@ -430,55 +430,55 @@ function FinancialHealthCard({ savings, expense, format }: { savings: number; ex
         <svg className="balance-line-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Account balance line chart">
           <defs>
             <linearGradient id="balanceArea" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#34d399" stopOpacity="0.34" />
-              <stop offset="72%" stopColor="#14b8a6" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="#020617" stopOpacity="0" />
+              <stop offset="0%" stopColor="#45f5dc" stopOpacity="0.42" />
+              <stop offset="55%" stopColor="#14b8a6" stopOpacity="0.14" />
+              <stop offset="100%" stopColor="#020617" stopOpacity="0.02" />
             </linearGradient>
             <filter id="balanceGlow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feGaussianBlur stdDeviation="10" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="balanceDotGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="16" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
           </defs>
-            {[0, 1, 2, 3, 4].map((line) => {
-            const y = top + line * ((bottom - top) / 4);
+          {[40000, 35000, 30000, 25000, 20000].map((value) => {
+            const y = yFor(value);
             return (
-              <g key={`h-${line}`}>
+              <g key={value}>
                 <line className="balance-grid-line" x1={left} y1={y} x2={right} y2={y} />
-                <text className="balance-axis-label" x="18" y={y + 4}>{`${40 - line * 5}k`}</text>
+                <text className="balance-axis-label" x="36" y={y + 8}>{`${value / 1000}k`}</text>
               </g>
             );
-            })}
-            {[0, 1, 2, 3, 4, 5].map((line) => {
+          })}
+          {[0, 1, 2, 3, 4, 5].map((line) => {
             const x = left + line * ((right - left) / 5);
             return <line key={`v-${line}`} className="balance-grid-line balance-grid-vertical" x1={x} y1={top} x2={x} y2={bottom} />;
-            })}
-            <polyline
-            className="balance-area"
-            points={areaPoints}
-            />
+          })}
+          <line className="balance-top-dash" x1={left} y1={activeY} x2={right} y2={activeY} />
+          <polyline className="balance-area" points={areaPoints} />
           <polyline className="balance-line-shadow" points={linePoints} />
           <polyline className="balance-line" points={linePoints} filter="url(#balanceGlow)" />
-          <line className="balance-guide" x1={activeX} y1={top - 8} x2={activeX} y2={bottom} />
-          <line className="balance-guide balance-guide-horizontal" x1={left} y1={activeY} x2={right} y2={activeY} />
-          <circle className="balance-point-halo" cx={activeX} cy={activeY} r="22" />
-          <circle className="balance-point" cx={activeX} cy={activeY} r="6" />
-          <g className="balance-tooltip" transform={`translate(${Math.min(activeX + 16, right - 145)} ${Math.max(activeY - 42, top + 8)})`}>
-            <rect width="136" height="56" rx="8" />
-            <text x="13" y="22">{format(activePoint.value)}</text>
-            <text x="13" y="42">8 Apr 2026</text>
+          <line className="balance-guide" x1={activeX} y1={top} x2={activeX} y2={bottom + 8} />
+          <circle className="balance-point-halo" cx={activeX} cy={activeY} r="44" filter="url(#balanceDotGlow)" />
+          <circle className="balance-point" cx={activeX} cy={activeY} r="15" />
+          <g className="balance-tooltip" transform={`translate(${Math.min(activeX - 62, right - 270)} ${Math.max(activeY + 112, top + 20)})`}>
+            <rect width="260" height="108" rx="16" />
+            <text x="24" y="42">{format(activePoint.value)}</text>
+            <text x="24" y="82">8 Apr 2026</text>
           </g>
           {['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '01:00PM', '02:00PM'].map((label, index) => {
             const x = left + index * ((right - left) / 6);
-            return <text className="balance-time-label" x={x} y="332" key={label}>{label}</text>;
-            })}
+            return <text className="balance-time-label" x={x} y="592" key={label}>{label}</text>;
+          })}
         </svg>
-      </div>
-      <div className="health-grid">
-        <Result label="Expense Coverage" value={`${bufferRatio}%`} />
-        <Result label="Monthly Buffer" value={format(savings)} />
       </div>
     </div>
   );

@@ -358,22 +358,24 @@ select {
 }
 
 .balance-card {
+  padding: 20px;
   background:
-    radial-gradient(circle at 75% 20%, rgba(45, 212, 191, 0.24), transparent 28%),
-    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+    radial-gradient(circle at 74% 20%, rgba(45, 212, 191, 0.2), transparent 28%),
+    linear-gradient(145deg, rgba(11, 31, 42, 0.98), rgba(2, 6, 23, 0.98));
 }
 
 .balance-chart-shell {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid rgba(94, 234, 212, 0.16);
+  border-radius: 16px;
+  border: 1px solid rgba(45, 212, 191, 0.22);
   background:
-    radial-gradient(circle at 72% 28%, rgba(20, 184, 166, 0.28), transparent 18%),
-    linear-gradient(145deg, rgba(9, 46, 44, 0.82), rgba(4, 19, 27, 0.96));
+    radial-gradient(circle at 77% 20%, rgba(45, 212, 191, 0.3), transparent 18%),
+    linear-gradient(180deg, rgba(8, 56, 54, 0.72), rgba(4, 19, 27, 0.98));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 18px 46px rgba(20, 184, 166, 0.12);
+    inset 0 0 80px rgba(20, 184, 166, 0.08),
+    0 18px 46px rgba(20, 184, 166, 0.13);
 }
 
 .balance-chart-shell::before {
@@ -381,9 +383,9 @@ select {
   inset: 0;
   content: "";
   background:
-    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
+    linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
   mask-image: linear-gradient(180deg, black, transparent 92%);
   pointer-events: none;
 }
@@ -470,23 +472,30 @@ select {
   z-index: 1;
   display: block;
   width: 100%;
-  min-height: 330px;
+  min-height: 430px;
 }
 
 .balance-grid-line {
-  stroke: rgba(148, 163, 184, 0.13);
-  stroke-width: 1;
+  stroke: rgba(148, 163, 184, 0.17);
+  stroke-width: 1.6;
 }
 
 .balance-grid-vertical {
-  stroke-dasharray: 4 8;
+  stroke-dasharray: 8 22;
+  opacity: 0.72;
+}
+
+.balance-top-dash {
+  stroke: rgba(94, 234, 212, 0.34);
+  stroke-dasharray: 12 22;
+  stroke-width: 2;
 }
 
 .balance-axis-label,
 .balance-time-label {
   fill: rgb(148 163 184);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 23px;
+  font-weight: 900;
 }
 
 .balance-time-label {
@@ -500,10 +509,10 @@ select {
 
 .balance-line-shadow {
   fill: none;
-  stroke: rgba(20, 184, 166, 0.24);
+  stroke: rgba(45, 212, 191, 0.23);
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 14;
+  stroke-width: 28;
 }
 
 .balance-line {
@@ -511,44 +520,40 @@ select {
   stroke: #5eead4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3;
+  stroke-width: 9;
 }
 
 .balance-guide {
-  stroke: rgba(94, 234, 212, 0.34);
-  stroke-dasharray: 5 6;
-  stroke-width: 1;
-}
-
-.balance-guide-horizontal {
-  opacity: 0.68;
+  stroke: rgba(94, 234, 212, 0.4);
+  stroke-dasharray: 11 18;
+  stroke-width: 2;
 }
 
 .balance-point-halo {
-  fill: rgba(94, 234, 212, 0.18);
-  filter: blur(1px);
+  fill: rgba(94, 234, 212, 0.24);
 }
 
 .balance-point {
   fill: #99f6e4;
-  stroke: #0f766e;
-  stroke-width: 3;
+  stroke: rgba(8, 64, 62, 0.95);
+  stroke-width: 8;
 }
 
 .balance-tooltip rect {
-  fill: rgba(6, 30, 39, 0.92);
-  stroke: rgba(94, 234, 212, 0.2);
+  fill: rgba(6, 30, 39, 0.98);
+  stroke: rgba(94, 234, 212, 0.32);
+  stroke-width: 2;
 }
 
 .balance-tooltip text {
   fill: white;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 25px;
+  font-weight: 900;
 }
 
 .balance-tooltip text:last-child {
   fill: rgb(148 163 184);
-  font-size: 10px;
+  font-size: 19px;
 }
 
 .comparison-card {
