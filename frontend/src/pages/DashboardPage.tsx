@@ -374,93 +374,107 @@ function TransactionAnalyticsPanel({
 
 function FinancialHealthCard({ savings, expense, format }: { savings: number; expense: number; format: (value: number) => string }) {
   const bufferRatio = expense ? Math.round((savings / expense) * 100) : 0;
-  const candles = [
-    { label: 'Apr-1', open: 52, high: 62, low: 48, close: 58, volume: 44 },
-    { label: 'Apr-2', open: 58, high: 65, low: 53, close: 55, volume: 38 },
-    { label: 'May-1', open: 55, high: 61, low: 46, close: 49, volume: 51 },
-    { label: 'May-2', open: 49, high: 57, low: 44, close: 54, volume: 36 },
-    { label: 'Jun-1', open: 54, high: 69, low: 51, close: 64, volume: 48 },
-    { label: 'Jun-2', open: 64, high: 72, low: 58, close: 60, volume: 42 },
-    { label: 'Jul-1', open: 60, high: 67, low: 50, close: 53, volume: 56 },
-    { label: 'Jul-2', open: 53, high: 60, low: 47, close: 50, volume: 62 },
-    { label: 'Aug-1', open: 50, high: 66, low: 49, close: Math.min(69, Math.max(51, Math.round((savings / Math.max(expense, 1)) * 43))), volume: 46 },
-    { label: 'Now', open: Math.min(68, Math.max(50, Math.round((savings / Math.max(expense, 1)) * 43))), high: 74, low: 48, close: Math.min(74, Math.max(54, Math.round(bufferRatio / 2))), volume: 58 },
+  const balancePoints = [
+    { label: '8:00AM', value: 28600 },
+    { label: '8:30AM', value: 29550 },
+    { label: '9:00AM', value: 27900 },
+    { label: '9:30AM', value: 24800 },
+    { label: '10:00AM', value: 29200 },
+    { label: '10:30AM', value: 27650 },
+    { label: '11:00AM', value: 35200 },
+    { label: '11:30AM', value: 20900 },
+    { label: '12:00PM', value: 31200 },
+    { label: '12:30PM', value: 33600 },
+    { label: '1:00PM', value: Math.max(26000, Math.round(savings * 0.72)) },
+    { label: '1:30PM', value: Math.max(28000, Math.round(savings * 0.67)) },
+    { label: '2:00PM', value: Math.max(30000, Math.round(savings * 0.75)) },
   ];
   const width = 760;
-  const height = 300;
-  const top = 22;
-  const bottom = 226;
-  const minValue = 40;
-  const maxValue = 78;
-  const xStep = width / (candles.length + 1);
+  const height = 360;
+  const left = 54;
+  const right = 724;
+  const top = 78;
+  const bottom = 292;
+  const minValue = 18000;
+  const maxValue = 42000;
+  const xStep = (right - left) / (balancePoints.length - 1);
   const yFor = (value: number) => bottom - ((value - minValue) / (maxValue - minValue)) * (bottom - top);
-  const quoteRows = [
-    { label: 'BUFFER', value: format(savings), change: `${bufferRatio}%`, up: bufferRatio >= 85 },
-    { label: 'EXPENSE', value: format(expense), change: expense > 65000 ? 'HIGH' : 'OK', up: expense <= 65000 },
-    { label: 'SAVE AVG', value: format(55960), change: savings >= 55960 ? '+UP' : '-DOWN', up: savings >= 55960 },
-    { label: 'RISK', value: bufferRatio >= 90 ? 'LOW' : 'WATCH', change: bufferRatio >= 90 ? 'STABLE' : 'CUT', up: bufferRatio >= 90 },
-  ];
+  const linePoints = balancePoints.map((item, index) => `${left + index * xStep},${yFor(item.value)}`).join(' ');
+  const areaPoints = `${left},${bottom} ${linePoints} ${right},${bottom}`;
+  const activeIndex = 10;
+  const activePoint = balancePoints[activeIndex];
+  const activeX = left + activeIndex * xStep;
+  const activeY = yFor(activePoint.value);
 
   return (
-    <div className="panel dashboard-card finance-visual-card card-health market-card">
-      <div className="market-header">
-        <div>
-          <h2 className="panel-title">Financial Health Terminal</h2>
-          <p className="panel-subtitle">Cashflow candles built from recent savings and expense movement</p>
+    <div className="panel dashboard-card finance-visual-card card-health balance-card">
+      <div className="balance-chart-shell" aria-label="Account balance line graph">
+        <div className="balance-topbar">
+          <div className="balance-title">
+            <span className="balance-icon">₹</span>
+            <span>Balance</span>
+            <strong>{format(savings)}</strong>
+            <em>INR</em>
+          </div>
+          <div className="balance-controls">
+            <button type="button">1D</button>
+            <button type="button">Sync</button>
+            <button type="button">7 Days</button>
+          </div>
         </div>
-        <div className="market-live">
-          <span />
-          LIVE POC
-        </div>
-      </div>
-
-      <div className="market-terminal" aria-label="Trading style financial health graph">
-        <div className="market-sidebar">
-          {quoteRows.map((row) => (
-            <div className="quote-row" key={row.label}>
-              <span>{row.label}</span>
-              <strong>{row.value}</strong>
-              <em className={row.up ? 'quote-up' : 'quote-down'}>{row.change}</em>
-            </div>
+        <div className="balance-ranges" aria-label="Chart range">
+          {['1s', '15m', '1h', '4h', '1d', '7w'].map((range) => (
+            <button className={range === '1d' ? 'active' : ''} type="button" key={range}>{range}</button>
           ))}
         </div>
-        <div className="market-chart-panel">
-          <div className="terminal-toolbar">
-            <span>AIBANK-CASHFLOW</span>
-            <strong>{format(savings)}</strong>
-            <em className={bufferRatio >= 85 ? 'quote-up' : 'quote-down'}>
-              {bufferRatio >= 85 ? '+' : '-'}{Math.abs(bufferRatio - 85)}%
-            </em>
-          </div>
-          <svg className="candlestick-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Cashflow candlestick graph">
+        <svg className="balance-line-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Account balance line chart">
+          <defs>
+            <linearGradient id="balanceArea" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#34d399" stopOpacity="0.34" />
+              <stop offset="72%" stopColor="#14b8a6" stopOpacity="0.06" />
+              <stop offset="100%" stopColor="#020617" stopOpacity="0" />
+            </linearGradient>
+            <filter id="balanceGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
             {[0, 1, 2, 3, 4].map((line) => {
-              const y = top + line * ((bottom - top) / 4);
-              return <line key={`h-${line}`} className="chart-grid-line" x1="0" y1={y} x2={width} y2={y} />;
+            const y = top + line * ((bottom - top) / 4);
+            return (
+              <g key={`h-${line}`}>
+                <line className="balance-grid-line" x1={left} y1={y} x2={right} y2={y} />
+                <text className="balance-axis-label" x="18" y={y + 4}>{`${40 - line * 5}k`}</text>
+              </g>
+            );
             })}
             {[0, 1, 2, 3, 4, 5].map((line) => {
-              const x = 36 + line * ((width - 72) / 5);
-              return <line key={`v-${line}`} className="chart-grid-line chart-grid-vertical" x1={x} y1={top} x2={x} y2={bottom} />;
+            const x = left + line * ((right - left) / 5);
+            return <line key={`v-${line}`} className="balance-grid-line balance-grid-vertical" x1={x} y1={top} x2={x} y2={bottom} />;
             })}
             <polyline
-              className="moving-average"
-              points={candles.map((item, index) => `${(index + 1) * xStep},${yFor((item.high + item.low + item.close) / 3)}`).join(' ')}
+            className="balance-area"
+            points={areaPoints}
             />
-            {candles.map((item, index) => {
-              const x = (index + 1) * xStep;
-              const isUp = item.close >= item.open;
-              const bodyY = yFor(Math.max(item.open, item.close));
-              const bodyHeight = Math.max(8, Math.abs(yFor(item.open) - yFor(item.close)));
-              return (
-                <g className={isUp ? 'candle candle-up' : 'candle candle-down'} key={item.label}>
-                  <line x1={x} y1={yFor(item.high)} x2={x} y2={yFor(item.low)} />
-                  <rect x={x - 12} y={bodyY} width="24" height={bodyHeight} rx="3" />
-                  <rect className="volume-bar" x={x - 13} y={270 - item.volume} width="26" height={item.volume} rx="3" />
-                  <text x={x} y="292">{item.label.replace('-', ' ')}</text>
-                </g>
-              );
+          <polyline className="balance-line-shadow" points={linePoints} />
+          <polyline className="balance-line" points={linePoints} filter="url(#balanceGlow)" />
+          <line className="balance-guide" x1={activeX} y1={top - 8} x2={activeX} y2={bottom} />
+          <line className="balance-guide balance-guide-horizontal" x1={left} y1={activeY} x2={right} y2={activeY} />
+          <circle className="balance-point-halo" cx={activeX} cy={activeY} r="22" />
+          <circle className="balance-point" cx={activeX} cy={activeY} r="6" />
+          <g className="balance-tooltip" transform={`translate(${Math.min(activeX + 16, right - 145)} ${Math.max(activeY - 42, top + 8)})`}>
+            <rect width="136" height="56" rx="8" />
+            <text x="13" y="22">{format(activePoint.value)}</text>
+            <text x="13" y="42">8 Apr 2026</text>
+          </g>
+          {['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '01:00PM', '02:00PM'].map((label, index) => {
+            const x = left + index * ((right - left) / 6);
+            return <text className="balance-time-label" x={x} y="332" key={label}>{label}</text>;
             })}
-          </svg>
-        </div>
+        </svg>
       </div>
       <div className="health-grid">
         <Result label="Expense Coverage" value={`${bufferRatio}%`} />

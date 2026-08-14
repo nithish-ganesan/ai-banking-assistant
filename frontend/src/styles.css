@@ -357,190 +357,198 @@ select {
   margin-top: 16px;
 }
 
-.market-card {
+.balance-card {
   background:
-    radial-gradient(circle at 18% 8%, rgba(20, 184, 166, 0.16), transparent 28%),
+    radial-gradient(circle at 75% 20%, rgba(45, 212, 191, 0.24), transparent 28%),
     linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
 }
 
-.market-header {
-  display: flex;
-  align-items: start;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.market-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(110, 231, 183, 0.25);
-  background: rgba(16, 185, 129, 0.08);
-  color: #6ee7b7;
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  padding: 7px 10px;
-}
-
-.market-live span {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: #6ee7b7;
-  box-shadow: 0 0 12px rgba(110, 231, 183, 0.85);
-}
-
-.market-terminal {
-  display: grid;
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.market-sidebar,
-.market-chart-panel {
-  border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(2, 6, 23, 0.58);
-}
-
-.market-sidebar {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
+.balance-chart-shell {
+  position: relative;
   overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(94, 234, 212, 0.16);
+  background:
+    radial-gradient(circle at 72% 28%, rgba(20, 184, 166, 0.28), transparent 18%),
+    linear-gradient(145deg, rgba(9, 46, 44, 0.82), rgba(4, 19, 27, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 46px rgba(20, 184, 166, 0.12);
 }
 
-.quote-row {
-  display: grid;
-  gap: 5px;
-  min-height: 76px;
-  background: rgba(15, 23, 42, 0.82);
-  padding: 12px;
+.balance-chart-shell::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, black, transparent 92%);
+  pointer-events: none;
 }
 
-.quote-row span,
-.terminal-toolbar span {
-  color: rgb(148 163 184);
-  font-size: 0.68rem;
+.balance-topbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 8px;
+}
+
+.balance-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: rgb(226 232 240);
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
 }
 
-.quote-row strong {
-  color: rgb(241 245 249);
-  font-size: 0.96rem;
+.balance-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(94, 234, 212, 0.22);
+  background: rgba(15, 118, 110, 0.36);
+  color: #99f6e4;
+  box-shadow: inset 0 0 14px rgba(45, 212, 191, 0.18);
 }
 
-.quote-row em,
-.terminal-toolbar em {
-  justify-self: start;
-  border-radius: 4px;
-  font-size: 0.68rem;
+.balance-title strong {
+  color: white;
+  font-size: 1.04rem;
+  white-space: nowrap;
+}
+
+.balance-title em {
+  color: rgb(148 163 184);
+  font-size: 0.58rem;
   font-style: normal;
   font-weight: 900;
-  padding: 3px 6px;
+  letter-spacing: 0.08em;
 }
 
-.quote-up {
-  background: rgba(34, 197, 94, 0.14);
-  color: #6ee7b7;
-}
-
-.quote-down {
-  background: rgba(248, 113, 113, 0.16);
-  color: #f87171;
-}
-
-.market-chart-panel {
-  min-width: 0;
-  overflow: hidden;
-}
-
-.terminal-toolbar {
+.balance-controls,
+.balance-ranges {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.13);
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.94), rgba(12, 74, 110, 0.26));
-  padding: 10px 12px;
+  flex-wrap: wrap;
+  gap: 7px;
 }
 
-.terminal-toolbar strong {
-  margin-left: auto;
-  color: rgb(241 245 249);
-  font-size: 0.94rem;
+.balance-controls button,
+.balance-ranges button {
+  height: 26px;
+  border-radius: 7px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.58);
+  color: rgb(203 213 225);
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0 9px;
 }
 
-.candlestick-chart {
+.balance-ranges {
+  position: relative;
+  z-index: 1;
+  padding: 0 16px;
+}
+
+.balance-ranges .active {
+  border-color: rgba(94, 234, 212, 0.48);
+  background: rgba(20, 184, 166, 0.34);
+  color: #ccfbf1;
+}
+
+.balance-line-chart {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
-  min-height: 280px;
-  background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.05), transparent 55%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.4), rgba(2, 6, 23, 0.75));
+  min-height: 330px;
 }
 
-.chart-grid-line {
-  stroke: rgba(148, 163, 184, 0.15);
+.balance-grid-line {
+  stroke: rgba(148, 163, 184, 0.13);
   stroke-width: 1;
 }
 
-.chart-grid-vertical {
+.balance-grid-vertical {
   stroke-dasharray: 4 8;
 }
 
-.moving-average {
-  fill: none;
-  stroke: #fbbf24;
-  stroke-linecap: round;
-  stroke-width: 3;
-  opacity: 0.88;
-}
-
-.candle line {
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-.candle rect {
-  stroke-width: 1;
-}
-
-.candle-up line,
-.candle-up rect {
-  fill: #22c55e;
-  stroke: #86efac;
-}
-
-.candle-down line,
-.candle-down rect {
-  fill: #ef4444;
-  stroke: #fca5a5;
-}
-
-.candle .volume-bar {
-  opacity: 0.32;
-  stroke: none;
-}
-
-.candle text {
+.balance-axis-label,
+.balance-time-label {
   fill: rgb(148 163 184);
   font-size: 12px;
   font-weight: 700;
+}
+
+.balance-time-label {
   text-anchor: middle;
 }
 
-@media (min-width: 980px) {
-  .market-terminal {
-    grid-template-columns: 190px minmax(0, 1fr);
-  }
+.balance-area {
+  fill: url(#balanceArea);
+  stroke: none;
+}
 
-  .market-sidebar {
-    grid-template-columns: 1fr;
-  }
+.balance-line-shadow {
+  fill: none;
+  stroke: rgba(20, 184, 166, 0.24);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 14;
+}
+
+.balance-line {
+  fill: none;
+  stroke: #5eead4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.balance-guide {
+  stroke: rgba(94, 234, 212, 0.34);
+  stroke-dasharray: 5 6;
+  stroke-width: 1;
+}
+
+.balance-guide-horizontal {
+  opacity: 0.68;
+}
+
+.balance-point-halo {
+  fill: rgba(94, 234, 212, 0.18);
+  filter: blur(1px);
+}
+
+.balance-point {
+  fill: #99f6e4;
+  stroke: #0f766e;
+  stroke-width: 3;
+}
+
+.balance-tooltip rect {
+  fill: rgba(6, 30, 39, 0.92);
+  stroke: rgba(94, 234, 212, 0.2);
+}
+
+.balance-tooltip text {
+  fill: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.balance-tooltip text:last-child {
+  fill: rgb(148 163 184);
+  font-size: 10px;
 }
 
 .comparison-card {
