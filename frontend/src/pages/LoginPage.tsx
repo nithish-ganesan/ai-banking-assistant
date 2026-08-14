@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Clipboard, ExternalLink, Eye, Landmark, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Clipboard, ExternalLink, Landmark, ShieldCheck } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -185,20 +185,12 @@ export function LoginPage() {
     }
   }
 
-  function startGoogleLogin() {
-    if (window.google) {
-      window.google.accounts.id.prompt();
-      return;
-    }
-    setError('Google sign-in is still loading. Please use the Google button below in a moment.');
-  }
-
   return (
-    <main className="grid min-h-screen place-items-center bg-[#f5f7fb] px-4 py-8 text-slate-950">
+    <main className="grid min-h-screen place-items-center bg-ink px-4 py-8 text-slate-100">
       <motion.section
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid w-full max-w-5xl overflow-hidden rounded-[10px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.14)] md:min-h-[640px] md:grid-cols-[360px_minmax(0,1fr)]"
+        className="grid w-full max-w-5xl overflow-hidden rounded-[10px] border border-white/10 bg-white/[0.045] shadow-glow backdrop-blur-xl md:min-h-[640px] md:grid-cols-[360px_minmax(0,1fr)]"
       >
         <div
           className="relative grid min-h-[360px] content-between overflow-hidden bg-slate-900 p-8 text-white md:min-h-full"
@@ -217,55 +209,23 @@ export function LoginPage() {
             </div>
           </div>
           <div className="relative z-10 max-w-[280px]">
-            <p className="text-2xl font-semibold leading-tight">"A single view for smarter banking decisions."</p>
+            <p className="text-2xl font-semibold leading-tight">"AI-powered banking insights for faster service conversations."</p>
             <div className="mt-5 border-l-2 border-white/60 pl-4">
-              <p className="text-sm font-semibold">Nithish G</p>
-              <p className="text-xs text-white/70">AI Banking POC</p>
+              <p className="text-sm font-semibold">Transaction analytics</p>
+              <p className="text-xs text-white/70">Savings coach and secure Gmail access</p>
             </div>
           </div>
         </div>
 
-        <section className="grid content-center px-6 py-10 sm:px-12 lg:px-20">
+        <section className="grid content-center bg-[#111827] px-6 py-10 sm:px-12 lg:px-20">
           <div className="mx-auto w-full max-w-[430px]">
             <div className="mb-8 text-center">
-              <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-[#2563eb]"><ShieldCheck size={24} /></span>
-              <h2 className="mt-5 text-2xl font-bold">Welcome Back</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-500">Sign in with your Gmail account to open the banking dashboard.</p>
+              <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-blue-500/15 text-[#60a5fa]"><ShieldCheck size={24} /></span>
+              <h2 className="mt-5 text-2xl font-bold text-white">Welcome Back</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Continue with Gmail to access the AI banking dashboard, analytics, and savings coach.</p>
             </div>
 
-            <div className="grid gap-4">
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Email
-                <span className="flex h-11 items-center gap-3 rounded-md border border-slate-200 bg-slate-50 px-3 text-slate-500">
-                  <Mail size={17} />
-                  <span className="truncate text-sm font-medium">Use Google account below</span>
-                </span>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-slate-700">
-                Password
-                <span className="flex h-11 items-center gap-3 rounded-md border border-[#7c3aed] bg-white px-3 shadow-[0_0_0_3px_rgba(124,58,237,0.12)]">
-                  <Lock size={17} className="text-slate-400" />
-                  <span className="flex-1 text-left text-sm font-medium text-slate-400">Verified by Google</span>
-                  <Eye size={17} className="text-slate-400" />
-                </span>
-              </label>
-            </div>
-
-            <button
-              className="mt-5 h-11 w-full rounded-md bg-[#7c3aed] text-sm font-bold text-white shadow-[0_10px_22px_rgba(124,58,237,0.28)] transition hover:bg-[#6d28d9]"
-              type="button"
-              onClick={startGoogleLogin}
-            >
-              Login
-            </button>
-
-            <div className="my-6 flex items-center gap-3 text-xs font-medium text-slate-400">
-              <span className="h-px flex-1 bg-slate-200" />
-              or
-              <span className="h-px flex-1 bg-slate-200" />
-            </div>
-
-            <div className="min-h-[44px] w-full overflow-hidden rounded-md border border-slate-200 bg-white">
+            <div className="min-h-[44px] w-full overflow-hidden rounded-md border border-white/10 bg-white">
             {googleClientId ? (
               <div ref={googleButtonRef} className="w-full" aria-label="Continue with Google" />
             ) : (
@@ -273,24 +233,24 @@ export function LoginPage() {
             )}
             </div>
 
-            <p className="mt-5 text-center text-xs text-slate-400">
-              New here? <span className="font-semibold text-[#7c3aed]">Access is created after Google sign-in.</span>
+            <p className="mt-5 text-center text-xs text-slate-500">
+              Gmail verification only. Static POC data stays inside the banking workspace.
             </p>
 
             {googleUnavailable && (
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <a className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100" href={siteUrl} target="_blank" rel="noreferrer">
+                <a className="inline-flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/10 px-4 py-3 text-sm font-semibold text-slate-100 hover:bg-white/15" href={siteUrl} target="_blank" rel="noreferrer">
                   <ExternalLink size={17} />
                   Open site
                 </a>
-                <button className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100" type="button" onClick={copySiteLink}>
+                <button className="inline-flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/10 px-4 py-3 text-sm font-semibold text-slate-100 hover:bg-white/15" type="button" onClick={copySiteLink}>
                   <Clipboard size={17} />
                   Copy link
                 </button>
               </div>
             )}
-            {submitting && <p className="mt-4 text-center text-sm text-slate-500">Please wait...</p>}
-            {error && <p className="mt-5 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">{error}</p>}
+            {submitting && <p className="mt-4 text-center text-sm text-slate-300">Please wait...</p>}
+            {error && <p className="mt-5 rounded-md border border-red-300/30 bg-red-500/10 p-3 text-sm font-medium text-red-100">{error}</p>}
           </div>
         </section>
       </motion.section>
