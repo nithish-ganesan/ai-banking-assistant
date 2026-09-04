@@ -59,7 +59,7 @@ public class UserService {
         String email = authentication.getName();
         String name = authentication.getDetails() instanceof String details && !details.isBlank()
                 ? details
-                : email.substring(0, email.indexOf('@'));
+                : defaultName(email);
         return profile(email, name, Role.USER.name());
     }
 
@@ -73,7 +73,15 @@ public class UserService {
         if (!name.isBlank()) {
             return name;
         }
-        return email.substring(0, email.indexOf('@'));
+        return defaultName(email);
+    }
+
+    private String defaultName(String email) {
+        int atIndex = email.indexOf('@');
+        if (atIndex > 0) {
+            return email.substring(0, atIndex);
+        }
+        return email.isBlank() ? "User" : email;
     }
 
     private String claimAsString(Jwt token, String claim) {

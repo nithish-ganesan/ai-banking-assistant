@@ -51,17 +51,53 @@ public class GeminiService {
                     .retrieve()
                     .body(Map.class);
 
-            List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.get("candidates");
-            Map<String, Object> content = (Map<String, Object>) candidates.getFirst().get("content");
-            List<Map<String, String>> parts = (List<Map<String, String>>) content.get("parts");
-            return parts.getFirst().get("text");
+            String answer = extractAnswer(response);
+            if (!answer.isBlank()) {
+                return answer;
+            }
         } catch (RuntimeException ex) {
             return fallbackAnswer(userPrompt) + "\n\n_Note: Gemini is not reachable right now, so this response used the local banking assistant fallback._";
         }
+
+        return fallbackAnswer(userPrompt) + "\n\n_Note: Gemini returned an empty response, so this response used the local banking assistant fallback._";
+    }
+
+    private String extractAnswer(Map<String, Object> response) {
+        if (response == null) {
+            return "";
+        }
+
+        Object candidatesValue = response.get("candidates");
+        if (!(candidatesValue instanceof List<?> candidates) || candidates.isEmpty()) {
+            return "";
+        }
+
+        Object firstCandidate = candidates.getFirst();
+        if (!(firstCandidate instanceof Map<?, ?> candidate)) {
+            return "";
+        }
+
+        Object contentValue = candidate.get("content");
+        if (!(contentValue instanceof Map<?, ?> content)) {
+            return "";
+        }
+
+        Object partsValue = content.get("parts");
+        if (!(partsValue instanceof List<?> parts) || parts.isEmpty()) {
+            return "";
+        }
+
+        Object firstPart = parts.getFirst();
+        if (!(firstPart instanceof Map<?, ?> part)) {
+            return "";
+        }
+
+        Object text = part.get("text");
+        return text == null ? "" : text.toString().trim();
     }
 
     private String fallbackAnswer(String prompt) {
-        String lower = prompt.toLowerCase();
+        String lower = prompt == null ? "" : prompt.toLowerCase();
         if (lower.contains("otp") || lower.contains("fraud") || lower.contains("scam")) {
             return """
                     **This may be sensitive.** Do not share OTP, PIN, CVV, card number, UPI PIN, net-banking password, or screen access with anyone.

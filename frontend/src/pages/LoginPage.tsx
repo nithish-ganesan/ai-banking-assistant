@@ -5,6 +5,8 @@ import { Clipboard, ExternalLink, Landmark, ShieldCheck } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+const GOOGLE_SCRIPT_LOAD_TIMEOUT_MS = 10000;
+
 declare global {
   interface Window {
     google?: {
@@ -139,7 +141,7 @@ export function LoginPage() {
       };
     }
 
-    googleLoadTimer = window.setTimeout(showBrowserFallback, 3500);
+    googleLoadTimer = window.setTimeout(showBrowserFallback, GOOGLE_SCRIPT_LOAD_TIMEOUT_MS);
     const existingScript = document.querySelector<HTMLScriptElement>("script[src='https://accounts.google.com/gsi/client']");
     if (existingScript) {
       existingScript.addEventListener('load', renderGoogleButtonAfterLayout, { once: true });
@@ -232,10 +234,6 @@ export function LoginPage() {
               <p className="px-4 py-3 text-center text-sm text-slate-700">Set VITE_GOOGLE_CLIENT_ID to enable Google sign-in.</p>
             )}
             </div>
-
-            <p className="mt-5 text-center text-xs text-slate-500">
-              Gmail verification only. Static POC data stays inside the banking workspace.
-            </p>
 
             {googleUnavailable && (
               <div className="mt-5 grid grid-cols-2 gap-3">

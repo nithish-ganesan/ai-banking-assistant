@@ -55,13 +55,13 @@ sequenceDiagram
     User->>Browser: Sign in with Gmail
     Browser->>Google: Request Google ID token
     Google-->>Browser: Google ID token
-    Browser->>API: POST /api/auth/google with ID token
+    Browser->>API: POST /api/v1/auth/google with ID token
     API->>Google: Verify token signature and audience
     Google-->>API: Valid token claims
     API-->>Browser: App JWT and user profile
 
     User->>Browser: Ask banking question
-    Browser->>API: POST /api/chat with JWT
+    Browser->>API: POST /api/v1/chat with JWT
     API->>API: Validate JWT and apply safety rules
     alt Gemini key configured
         API->>Gemini: Send banking prompt
@@ -108,13 +108,13 @@ render.yaml
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| POST | `/api/auth/google` | Verify Google ID token and issue app JWT |
-| POST | `/api/chat` | Ask the AI banking assistant |
-| GET | `/api/chat/history` | Read chat history |
-| DELETE | `/api/chat/history` | Clear chat history |
-| POST | `/api/banking/transactions/summary` | Summarize transactions |
-| POST | `/api/banking/emi` | Calculate EMI |
-| POST | `/api/banking/cards/recommend` | Recommend a credit card |
+| POST | `/api/v1/auth/google` | Verify Google ID token and issue app JWT |
+| POST | `/api/v1/chat` | Ask the AI banking assistant |
+| GET | `/api/v1/chat/history` | Read chat history |
+| DELETE | `/api/v1/chat/history` | Clear chat history |
+| POST | `/api/v1/banking/transactions/summary` | Summarize transactions |
+| POST | `/api/v1/banking/emi` | Calculate EMI |
+| POST | `/api/v1/banking/cards/recommend` | Recommend a credit card |
 
 ## Local Development
 
@@ -163,7 +163,7 @@ Frontend variables are documented in [frontend/.env.example](frontend/.env.examp
 
 Required or commonly used frontend values:
 
-- `VITE_API_BASE_URL`
+- `VITE_API_URL`
 - `VITE_GOOGLE_CLIENT_ID`
 
 ## Build

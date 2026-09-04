@@ -6,6 +6,7 @@ import com.aibank.assistant.dto.AuthDtos.UserProfile;
 import com.aibank.assistant.service.UserService;
 import jakarta.validation.Valid;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping({"/api/auth", "/api/v1/auth"})
 public class AuthController {
     private final UserService userService;
+    private final String googleClientId;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, @Value("${app.google.client-id}") String googleClientId) {
         this.userService = userService;
+        this.googleClientId = googleClientId;
     }
 
     @PostMapping("/google")
@@ -34,9 +37,10 @@ public class AuthController {
 
     @GetMapping("/google/status")
     public Map<String, String> googleStatus() {
+        boolean configured = googleClientId != null && !googleClientId.isBlank();
         return Map.of(
-                "status", "ready",
-                "message", "Configure GOOGLE_CLIENT_ID to enable Gmail sign-in."
+                "status", configured ? "ready" : "not_configured",
+                "message", configured ? "Google sign-in is configured." : "Configure GOOGLE_CLIENT_ID to enable Gmail sign-in."
         );
     }
 }

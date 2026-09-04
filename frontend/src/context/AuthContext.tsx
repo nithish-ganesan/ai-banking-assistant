@@ -13,15 +13,13 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [token, setToken] = useState(() => localStorage.getItem('ai-bank-token'));
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    const raw = localStorage.getItem('ai-bank-user');
-    return raw ? JSON.parse(raw) : null;
-  });
+  const [user, setUser] = useState<UserProfile | null>(() => readStoredUser());
 
   async function loginWithGoogle(idToken: string) {
-    const { data } = await api.post<{ token: string; user: UserProfile }>('/api/auth/google', { idToken });
+    const { data } = await api.post<{ token: string; user: UserProfile }>('/auth/google', { idToken });
     localStorage.setItem('ai-bank-token', data.token);
     localStorage.setItem('ai-bank-user', JSON.stringify(data.user));
+    sessionStorage.setItem('ai-bank-welcome-pending', 'true');
     setToken(data.token);
     setUser(data.user);
   }
@@ -33,12 +31,29 @@ export function AuthProvider({ children }: PropsWithChildren) {
     logout: () => {
       localStorage.removeItem('ai-bank-token');
       localStorage.removeItem('ai-bank-user');
+      sessionStorage.removeItem('ai-bank-welcome-pending');
       setToken(null);
       setUser(null);
     },
   }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+function readStoredUser() {
+  const raw = localStorage.getItem('ai-bank-user');
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<UserProfile>;
+    if (typeof parsed.name === 'string' && typeof parsed.email === 'string' && typeof parsed.role === 'string') {
+      return parsed as UserProfile;
+    }
+  } catch {
+    localStorage.removeItem('ai-bank-user');
+  }
+
+  return null;
 }
 
 export function useAuth() {
